@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cricket Player Registration</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      padding: 40px;
+    }
+    .form-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      max-width: 550px;
+      margin: auto;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: 600;
+      color: #444;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+    button {
+      background: #28a745;
+      color: #fff;
+      padding: 14px;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>🏏 Cricket Player Registration</h2>
+    <form id="cricketForm">
+      <label>Player Name</label>
+      <input type="text" name="player_name" required>
+
+      <label>Father Name</label>
+      <input type="text" name="father_name" required>
+
+      <label>T-Shirt Size</label>
+      <select name="tshirt_size" required>
+        <option value="">-- Select Size --</option>
+        <option value="S">S</option>
+        <option value="M">M</option>
+        <option value="L">L</option>
+        <option value="XL">XL</option>
+        <option value="XXL">XXL</option>
+      </select>
+
+      <label>Jersey Number</label>
+      <input type="number" name="jersey_number" required>
+
+      <label>Payment Method</label>
+      <select name="payment_method" required>
+        <option value="">-- Select Payment Option --</option>
+        <option value="phonepe">PhonePe (UPI)</option>
+        <option value="googlepay">Google Pay (UPI)</option>
+        <option value="paytm">Paytm (UPI)</option>
+      </select>
+
+      <button type="button" id="payBtn">Submit & Pay</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("payBtn").onclick = function(e) {
+      e.preventDefault();
+
+      // Player ka data nikalna
+      let playerName = document.querySelector("input[name='player_name']").value;
+      let fatherName = document.querySelector("input[name='father_name']").value;
+      let tshirtSize = document.querySelector("select[name='tshirt_size']").value;
+      let jerseyNumber = document.querySelector("input[name='jersey_number']").value;
+      let paymentMethod = document.querySelector("select[name='payment_method']").value;
+
+      if(!playerName || !fatherName || !tshirtSize || !jerseyNumber || !paymentMethod){
+        alert("⚠️ Please fill all details and select payment method!");
+        return;
+      }
+
+      // Razorpay Payment Gateway
+      var options = {
+        "key": "rzp_test_YourKeyHere", // 👈 Razorpay key id (replace with live key)
+        "amount": 50000, // amount in paise (500 INR)
+        "currency": "INR",
+        "name": "Cricket Club",
+        "description": "Player Registration Fee",
+        "handler": function (response){
+            alert("✅ Payment Successful! ID: " + response.razorpay_payment_id);
+            document.getElementById("cricketForm").submit();
+        },
+        "prefill": {
+            "name": playerName,
+            "email": "test@example.com", // optional
+            "contact": "9999999999"      // optional
+        },
+        "theme": {
+            "color": "#28a745"
+        },
+        "method": {
+          "upi": true,    // UPI allowed
+          "card": false,  // disable cards
+          "wallet": false // disable wallet
+        }
+      };
+
+      var rzp1 = new Razorpay(options);
+      rzp1.open();
+    }
+  </script>
+</body>
+</html>
